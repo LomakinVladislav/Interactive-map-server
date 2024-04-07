@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
+from typing import List
 from schemas.boundaries import BoundariesCreate, BoundariesShow
-from db.repository.boundaries import create_new_boundary
+from db.repository.boundaries import create_new_boundary,get_boundaries
 from db.session import get_db
 
 router = APIRouter()
@@ -13,3 +14,13 @@ def add_boundary(boundary_data: BoundariesCreate, db: Session = Depends(get_db))
         return new_boundary
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Ошибка при создании границы объекта: {e}")
+
+
+
+@router.get("/boundaries/", response_model=List[BoundariesShow], status_code=status.HTTP_200_OK)
+def read_boundaries(db: Session = Depends(get_db)):
+    """
+    Возвращает список всех границ.
+    """
+    boundaries = get_boundaries(db=db)
+    return boundaries

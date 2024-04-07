@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 from schemas.redemption_status import RedemptionStatusCreate,ShowStatus
 from db.session import get_db
-from typing import List
-from db.repository.redemption_status import create_redemption_status
+from db.repository.redemption_status import create_redemption_status,retrieve_redemption_status
 
 router = APIRouter()
 
@@ -21,3 +20,12 @@ def add_redemption_status(status_data: RedemptionStatusCreate, db: Session = Dep
 
     return new_status
 
+@router.get("/redemption_status/{status_id}", response_model=ShowStatus)
+def get_redemption_status(status_id: int, db: Session = Depends(get_db)):
+    """
+    Получить информацию о статусе выкупа по его ID.
+    """
+    status = retrieve_redemption_status(db=db, status_id=status_id)
+    if not status:
+        raise HTTPException(status_code=404, detail="Статус выкупа не найден")
+    return status

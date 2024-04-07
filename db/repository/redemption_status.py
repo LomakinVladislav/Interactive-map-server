@@ -8,3 +8,6 @@ def create_redemption_status(status_data: RedemptionStatusCreate, db: Session):
     db.commit()
     db.refresh(new_status)
     return new_status
+
+def retrieve_redemption_status(db: Session, status_id: int):
+    return db.query(Redemption_status).filter(Redemption_status.id == status_id).first()

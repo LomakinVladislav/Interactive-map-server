@@ -10,3 +10,7 @@ def create_new_boundary(boundary_data: BoundariesCreate, db: Session):
     db.commit()
     db.refresh(new_boundary)
     return new_boundary
+
+
+def get_boundaries(db: Session):
+    return db.query(Boundaries).all()
