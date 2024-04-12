@@ -1,7 +1,12 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class ObjectCreate(BaseModel):
+
+class ObjectBase(BaseModel):
+    class Config:
+        orm_mode = True
+
+class ObjectCreate(ObjectBase):
     address: str
     area: float
     cadastral_number: str
@@ -12,7 +17,7 @@ class ObjectCreate(BaseModel):
     redemption_status_id: int
 
 
-class ObjectShow(BaseModel):
+class ObjectShow(ObjectBase):
     id: int
     address: str
     area: float
@@ -23,7 +28,7 @@ class ObjectShow(BaseModel):
     owner_ship_rights: str
     redemption_status_id: int
 
-class ObjectUpdate(BaseModel):
+class ObjectUpdate(ObjectBase):
     address: Optional[str] = None
     area: Optional[float] = None
     cadastral_number: Optional[str] = None
@@ -33,5 +38,3 @@ class ObjectUpdate(BaseModel):
     owner_ship_rights: Optional[str] = None
 
 
-    class Config:
-        orm_mode = True

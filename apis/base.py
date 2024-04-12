@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-
 from apis.v1 import route_redemption_status
 from apis.v1 import route_object
 from apis.v1 import route_boundaries
