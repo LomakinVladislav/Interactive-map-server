@@ -6,6 +6,10 @@ class ObjectBase(BaseModel):
     class Config:
         orm_mode = True
 
+class ObjectDetails(BaseModel):
+    cadastral_number: str
+    address: str
+    area: float
 class ObjectCreate(ObjectBase):
     address: str
     area: float

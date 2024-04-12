@@ -17,3 +17,4 @@ def retrieve_all_objects(db: Session):
     return db.query(Object).all()
 
 
+
