@@ -5,7 +5,7 @@ from schemas.object import ObjectCreate,ObjectShow,ObjectUpdate,ObjectDetails
 from db.session import get_db
 from db.repository.object import create_new_object,retrieve_object
 from db.models.object import Object
-
+from typing import List
 
 router = APIRouter()
 
@@ -79,16 +79,19 @@ def get_area(object_id: int, db: Session = Depends(get_db)):
     if obj is None:
         raise HTTPException(status_code=404, detail="Объект не найден.")
     return obj.area
-@router.get("/{object_id}/details", response_model=ObjectDetails, status_code=status.HTTP_200_OK)
-def get_object_details(object_id: int, db: Session = Depends(get_db)):
+
+
+@router.get("/objects/details", response_model=List[ObjectDetails], status_code=status.HTTP_200_OK)
+def get_all_object_details(db: Session = Depends(get_db)):
     """
-       Получает кадастровый номер, площадь и адрес объекта недвижимости по его ID.
+       Получает кадастровые номера, площади и адреса всех объектов недвижимости.
     """
-    obj = db.query(Object).filter(Object.id == object_id).first()
-    if obj is None:
-        raise HTTPException(status_code=404, detail="Объект не найден.")
-    return ObjectDetails(
+    objects = db.query(Object).all()
+    if not objects:
+        raise HTTPException(status_code=404, detail="Объекты не найдены.")
+
+    return [ObjectDetails(
         cadastral_number=obj.cadastral_number,
         address=obj.address,
         area=obj.area
-    )
+    ) for obj in objects]
