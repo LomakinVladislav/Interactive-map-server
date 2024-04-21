@@ -18,9 +18,9 @@ def add_boundary(boundary_data: BoundariesCreate, db: Session = Depends(get_db))
 
 
 @router.get("/boundaries/", response_model=List[BoundariesShow], status_code=status.HTTP_200_OK)
-def read_boundaries(db: Session = Depends(get_db)):
+def read_boundaries(layer_id: int = 0, db: Session = Depends(get_db)):
     """
     Возвращает список всех границ.
     """
-    boundaries = get_boundaries(db=db)
+    boundaries = get_boundaries(layer_id, db=db)
     return boundaries

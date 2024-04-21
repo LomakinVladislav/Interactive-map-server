@@ -4,6 +4,8 @@ from schemas.boundaries import BoundariesCreate,BoundariesShow
 
 from db.models.boundaries import Boundaries
 
+from db.models.layer import Layer
+
 def create_new_boundary(boundary_data: BoundariesCreate, db: Session):
     new_boundary = Boundaries(**boundary_data.dict())
     db.add(new_boundary)
@@ -12,5 +14,11 @@ def create_new_boundary(boundary_data: BoundariesCreate, db: Session):
     return new_boundary
 
 
-def get_boundaries(db: Session):
-    return db.query(Boundaries).all()
+def get_boundaries(layer_id: int, db: Session):
+    if layer_id > 0:
+        return db.query(Boundaries, Layer)\
+        .join(Layer, Boundaries.layer_id == Layer.id)\
+        .filter(Boundaries.layer_id == layer_id)\
+        .all()
+    else:
+        return db.query(Boundaries).all()
