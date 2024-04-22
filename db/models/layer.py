@@ -7,4 +7,4 @@ class Layer(Base):
     id = Column(Integer, primary_key=True, index=True)
     color = Column(String, nullable = False)
     description = Column(String, nullable = False)
-
+    boundaries = relationship("Boundaries", back_populates="layer")

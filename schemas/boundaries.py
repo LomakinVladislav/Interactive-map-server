@@ -7,6 +7,7 @@ class BoundariesCreate(BaseModel):
     latitude: float
     longitude: float
 
+
 class BoundariesShow(BaseModel):
     id: int
     object_id: int
@@ -14,5 +15,14 @@ class BoundariesShow(BaseModel):
     latitude: float
     longitude: float
 
+
+
     class Config:
         orm_mode = True
+
+     #   class BoundariesWithLayerShow(BaseModel):
+    #     id: int
+    #     object_id: int
+    #     layer: LayerShow
+    #     latitude: float
+    #     longitude: float

@@ -13,3 +13,4 @@ def create_new_layer(layer_data: LayerCreate, db: Session):
 
 def get_layer(db: Session, layer_id: int):
     return db.query(Layer).filter(Layer.id == layer_id).first()
+

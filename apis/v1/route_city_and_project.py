@@ -20,10 +20,10 @@ def add_city_and_project(city_and_project_data: CityAndProjectCreate, db: Sessio
 
     return new_city_and_project
 
-@router.get("/redemption_status/{city_and_project_id}", response_model=ShowStatus)
+@router.get("/city_and_project/{city_and_project_id}", response_model=ShowStatus)
 def get_city_and_project(city_and_project_id: int, db: Session = Depends(get_db)):
     """
-    Получить информацию о статусе выкупа по его ID.
+    Получить информацию о проекте по его ID.
     """
     status = retrieve_city_and_project(db=db, city_and_project_id=city_and_project_id)
     if not status:

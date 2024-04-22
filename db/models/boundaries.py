@@ -9,5 +9,5 @@ class Boundaries(Base):
     layer_id = Column(Integer, ForeignKey("layer.id"))
     latitude = Column(Numeric, default=False)
     longitude = Column(Numeric, default=True)
-
+    layer = relationship("Layer", back_populates="boundaries")
 
