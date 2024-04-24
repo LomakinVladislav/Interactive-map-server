@@ -19,6 +19,9 @@ class ObjectCreate(ObjectBase):
     num_residents: int
     owner_ship_rights: str
     redemption_status_id: int
+    city_and_project_id: int
+    object_type_id: int
+
 
 
 class ObjectShow(ObjectBase):

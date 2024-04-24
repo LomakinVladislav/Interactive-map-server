@@ -17,12 +17,7 @@ class BoundariesShow(BaseModel):
 
 
 
+
     class Config:
         orm_mode = True
 
-     #   class BoundariesWithLayerShow(BaseModel):
-    #     id: int
-    #     object_id: int
-    #     layer: LayerShow
-    #     latitude: float
-    #     longitude: float

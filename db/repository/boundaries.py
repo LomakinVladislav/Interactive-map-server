@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from schemas.boundaries import BoundariesCreate,BoundariesShow
 
 from db.models.boundaries import Boundaries
-from db.models.layer import Layer
 
 def create_new_boundary(boundary_data: BoundariesCreate, db: Session):
     new_boundary = Boundaries(**boundary_data.dict())

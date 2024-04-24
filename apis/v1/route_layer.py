@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List, Optional
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 
 from db.models.layer import Layer
 
@@ -30,7 +30,7 @@ def read_layer(layer_id: int, db: Session = Depends(get_db)):
        """
     layer = get_layer(db=db, layer_id=layer_id)
     if not layer:
-        raise HTTPException(status_code=404, detail="Layer not found")
+        raise HTTPException(status_code=404, detail="Слой не найден")
     return layer
 
 
@@ -40,16 +40,17 @@ class LayerWithBoundaries(LayerShow):
     class Config:
         orm_mode = True
 
-@router.get("/layers/", response_model=List[LayerWithBoundaries], status_code=status.HTTP_200_OK)
+@router.get("/layers-with-boundaries/", response_model=List[LayerWithBoundaries], status_code=status.HTTP_200_OK)
 def read_layers_with_boundaries(layer_id: Optional[int] = None, db: Session = Depends(get_db)):
-
-    query = db.query(Layer).options(joinedload(Layer.boundaries))
+    """
+    Получать слои с их границами.
+    """
+    query = db.query(Layer).join(Layer.boundaries)
     if layer_id is not None:
-        layer = query.filter(Layer.id == layer_id).first()
+        layer = query.filter(Layer.id == layer_id).all()
         if not layer:
-            raise HTTPException(status_code=404, detail="Layer not found")
-        return [layer]
+            raise HTTPException(status_code=404, detail="Координаты не найдены")
+        return layer
     else:
         layers = query.all()
         return layers
-

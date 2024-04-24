@@ -5,9 +5,16 @@ class CityAndProjectCreate(BaseModel):
     city: str
     project_name: str
 
-class ShowStatus(CityAndProjectCreate):
+
+class CityAndProjectShow(BaseModel):
+    city: str
+    project_name: str
+
+class ShowProject(CityAndProjectCreate):
     id:int
 
+class ProjectName(BaseModel):
+    project_name: str
 
     class Config():
         orm_mode =True

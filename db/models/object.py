@@ -7,6 +7,7 @@ class Object(Base):
     id = Column(Integer, primary_key=True)
     redemption_status_id = Column(Integer, ForeignKey("redemption_status.id"))
     city_and_project_id = Column(Integer, ForeignKey("city_and_project.id"))
+    object_type_id = Column(Integer, ForeignKey("object_type.id"))
     redemption_status = relationship("Redemption_status")
     address = Column(String, nullable=False)
     area = Column(Numeric, nullable=False)
