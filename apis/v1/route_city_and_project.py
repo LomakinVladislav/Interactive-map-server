@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, HTTPException
 from sqlalchemy.orm import Session
 from fastapi import Depends
-from schemas.city_and_project import CityAndProjectCreate,ShowProject,ProjectName
+from schemas.city_and_project import CityAndProjectCreate,ShowProject,ProjectName,City
 from db.session import get_db
 from db.repository.city_and_project import create_city_and_project,retrieve_city_and_project
 from db.models.city_and_project import City_and_project
@@ -33,13 +33,13 @@ def get_city_and_project(city_and_project_id: int, db: Session = Depends(get_db)
     return status
 
 
-@router.get("/cities/", response_model=List[str], status_code=status.HTTP_200_OK)
+@router.get("/cities/", response_model=List[City], status_code=status.HTTP_200_OK)
 def get_all_cities(db: Session = Depends(get_db)):
 
     """ Получить список всех городов. """
     try:
         cities = db.query(City_and_project.city).distinct().all()
-        cities = [city[0] for city in cities]  # Преобразование списка кортежей в список строк
+        cities = [City(city=city[0]) for city in cities]  # Преобразование списка кортежей в список строк
         return cities
     except:
         raise HTTPException(status_code=404, detail="Не удалось получить данные о городах")

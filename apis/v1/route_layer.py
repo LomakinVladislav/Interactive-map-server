@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List, Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session,joinedload
 
 from db.models.layer import Layer
 
@@ -45,12 +45,12 @@ def read_layers_with_boundaries(layer_id: Optional[int] = None, db: Session = De
     """
     Получать слои с их границами.
     """
-    query = db.query(Layer).join(Layer.boundaries)
+    query = db.query(Layer).options(joinedload(Layer.boundaries))
     if layer_id is not None:
-        layer = query.filter(Layer.id == layer_id).all()
+        layer = query.filter(Layer.id == layer_id).first()
         if not layer:
             raise HTTPException(status_code=404, detail="Координаты не найдены")
-        return layer
+        return [layer]
     else:
         layers = query.all()
         return layers

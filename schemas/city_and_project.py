@@ -16,6 +16,9 @@ class ShowProject(CityAndProjectCreate):
 class ProjectName(BaseModel):
     project_name: str
 
+class City(BaseModel):
+    city: str
+
     class Config():
         orm_mode =True
 

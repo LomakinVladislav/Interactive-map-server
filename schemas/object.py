@@ -25,7 +25,6 @@ class ObjectCreate(ObjectBase):
 
 
 class ObjectShow(ObjectBase):
-    id: int
     address: str
     area: float
     cadastral_number: str
@@ -34,6 +33,9 @@ class ObjectShow(ObjectBase):
     num_residents: int
     owner_ship_rights: str
     redemption_status_id: int
+    city_and_project_id: int
+    object_type_id: int
+
 
 class ObjectUpdate(ObjectBase):
     address: Optional[str] = None

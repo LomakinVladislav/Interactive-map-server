@@ -1,54 +1,27 @@
 from fastapi import APIRouter, status, HTTPException
 from sqlalchemy.orm import Session
 from fastapi import Depends
-from schemas.object_type import ObjectTypeCreate,ShowObjectType
+from schemas.object import ObjectShow
 from db.session import get_db
-from db.repository.object_type import create_object_type,retrieve_object_type
-from db.models.object_type import Object_type
-from typing import List
+from db.models.object import Object
+from typing import List,Optional
 
 router = APIRouter()
 
+@router.get("/objects/", response_model=List[ObjectShow], status_code=status.HTTP_200_OK)
+def read_objects(object_type_id: Optional[int] = None, db: Session = Depends(get_db)):
+    """
+    Получить список объектов по типу объекта
+    """
+    query = db.query(Object)
 
-@router.get("/first-type/", response_model=str, status_code=status.HTTP_200_OK)
-def get_first_type(db: Session = Depends(get_db)):
+    if object_type_id is not None:
+        objects = query.filter(Object.object_type_id == object_type_id).all()
+        if not objects:
+            raise HTTPException(status_code=404, detail="Объекты с данным типом не найдены")
+    else:
+        objects = query.all()
+        if not objects:
+            raise HTTPException(status_code=404, detail="Объекты не найдены")
 
-    """ Получить первый тип объекта. """
-    try:
-        first_type = db.query(Object_type.type).distinct().order_by(Object_type.type).first()
-        if first_type:
-            return first_type[0]
-        else:
-            raise HTTPException(status_code=404, detail="Тип объекта не найден")
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=f"Не удалось получить данные о типе объекта: {e}")
-
-
-@router.get("/second-type/", response_model=str, status_code=status.HTTP_200_OK)
-def get_second_type(db: Session = Depends(get_db)):
-    """ Получить второй тип объекта. """
-    try:
-
-        second_type = db.query(Object_type.type).distinct().order_by(Object_type.type).offset(1).first()
-        if second_type:
-
-            return second_type[0]
-        else:
-            raise HTTPException(status_code=404, detail="Тип объекта не найден")
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=f"Не удалось получить данные о типе объекта: {e}")
-
-
-@router.get("/third-type/", response_model=str, status_code=status.HTTP_200_OK)
-def get_third_type(db: Session = Depends(get_db)):
-    """ Получить третий тип объекта. """
-    try:
-
-        third_type = db.query(Object_type.type).distinct().order_by(Object_type.type).offset(2).first()
-        if third_type:
-
-            return third_type[0]
-        else:
-            raise HTTPException(status_code=404, detail="Тип объекта не найден")
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=f"Не удалось получить данные о типе объекта: {e}")
+    return objects
