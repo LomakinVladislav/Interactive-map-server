@@ -1,5 +1,10 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional,List
+
+from schemas.boundaries import BoundariesShow
+from schemas.city_and_project import CityAndProjectShow
+from schemas.object_type import ShowObjectType
+from schemas.redemption_status import ShowStatus
 
 
 class ObjectBase(BaseModel):
@@ -18,10 +23,11 @@ class ObjectCreate(ObjectBase):
     redemption_period: str
     num_residents: int
     owner_ship_rights: str
+    center_latitude: float
+    center_longitude: float
     redemption_status_id: int
     city_and_project_id: int
     object_type_id: int
-
 
 
 class ObjectShow(ObjectBase):
@@ -32,10 +38,11 @@ class ObjectShow(ObjectBase):
     redemption_period: str
     num_residents: int
     owner_ship_rights: str
+    center_latitude: float
+    center_longitude: float
     redemption_status_id: int
     city_and_project_id: int
     object_type_id: int
-
 
 class ObjectUpdate(ObjectBase):
     address: Optional[str] = None
@@ -45,5 +52,7 @@ class ObjectUpdate(ObjectBase):
     redemption_period: Optional[str] = None
     num_residents: Optional[int] = None
     owner_ship_rights: Optional[str] = None
+
+
 
 

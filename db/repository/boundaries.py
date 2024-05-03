@@ -1,7 +1,5 @@
 from sqlalchemy.orm import Session
-
-from schemas.boundaries import BoundariesCreate,BoundariesShow
-
+from schemas.boundaries import BoundariesCreate
 from db.models.boundaries import Boundaries
 
 def create_new_boundary(boundary_data: BoundariesCreate, db: Session):

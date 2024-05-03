@@ -10,8 +10,5 @@ class LayerShow(BaseModel):
     description: str
 
 
-
-
-
     class Config:
         orm_mode = True

@@ -1,11 +1,16 @@
-from fastapi import APIRouter,HTTPException,status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, status, Query
+from sqlalchemy.orm import Session, joinedload
 from fastapi import Depends
+
+from db.models.boundaries import Boundaries
+from db.models.city_and_project import City_and_project
+from db.models.layer import Layer
+from schemas.boundaries import BoundariesShow
 from schemas.object import ObjectCreate,ObjectShow,ObjectUpdate,ObjectDetails
 from db.session import get_db
 from db.repository.object import create_new_object,retrieve_object
 from db.models.object import Object
-from typing import List
+from typing import List,Optional
 
 router = APIRouter()
 
@@ -63,7 +68,7 @@ def get_cadastral_number(object_id: int, db: Session = Depends(get_db)):
 @router.get("/{object_id}/address", response_model=str)
 def get_address(object_id: int, db: Session = Depends(get_db)):
     """
-       Получает адресс объекта недвижимости по его ID.
+       Получает адрес объекта недвижимости по его ID.
     """
     obj = db.query(Object).filter(Object.id == object_id).first()
     if obj is None:
@@ -95,3 +100,44 @@ def get_all_object_details(db: Session = Depends(get_db)):
         address=obj.address,
         area=obj.area
     ) for obj in objects]
+
+
+
+class ObjectWithBoundaries(ObjectShow):
+    boundaries: List[BoundariesShow]
+
+    class Config:
+        orm_mode = True
+
+
+@router.get("/object/", response_model=List[ObjectWithBoundaries], status_code=status.HTTP_200_OK)
+def read_objects_with_boundaries(
+
+        object_type_id: Optional[int] = Query(None),
+        layer_id: Optional[int] = Query(None),
+        city: Optional[str] = Query(None),
+        project_name: Optional[str] = Query(None),
+        db: Session = Depends(get_db)
+):
+
+    query = db.query(Object).options(joinedload(Object.boundaries), joinedload(Object.object_type))
+
+    if object_type_id is not None:
+        query = query.filter(Object.object_type_id == object_type_id)
+
+    if layer_id is not None:
+        query = query.join(Boundaries).join(Layer).filter(Layer.id == layer_id)
+
+    if city:
+        query = query.filter(Object.city_and_project.has(City_and_project.city == city))
+
+    if project_name:
+        query = query.filter(Object.city_and_project.has(City_and_project.project_name == project_name))
+
+    objects = query.all()
+    if not objects:
+        raise HTTPException(status_code=404, detail="Объекты не найдены по заданным критериям")
+
+    return objects
+
+

@@ -16,4 +16,8 @@ class Object(Base):
     redemption_period = Column(String, nullable=False)
     num_residents = Column(Integer, nullable=False)
     owner_ship_rights = Column(String, nullable=False)
-
+    center_latitude = Column(Numeric, default=False)
+    center_longitude = Column(Numeric, default=True)
+    boundaries = relationship("Boundaries", back_populates="object")
+    object_type = relationship("Object_type", backref="object")
+    city_and_project = relationship("City_and_project", backref="objects")

@@ -10,4 +10,4 @@ class Boundaries(Base):
     latitude = Column(Numeric, default=False)
     longitude = Column(Numeric, default=True)
     layer = relationship("Layer", back_populates="boundaries")
-
+    object = relationship("Object", back_populates="boundaries")

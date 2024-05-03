@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, HTTPException
 from sqlalchemy.orm import Session
 from fastapi import Depends
-from schemas.city_and_project import CityAndProjectCreate,ShowProject,ProjectName,City
+from schemas.city_and_project import CityAndProjectCreate, ShowProject, ProjectName, City, CityAndProjectShow
 from db.session import get_db
 from db.repository.city_and_project import create_city_and_project,retrieve_city_and_project
 from db.models.city_and_project import City_and_project
@@ -10,7 +10,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/city_and_project/", response_model=ShowProject, status_code=status.HTTP_201_CREATED)
+@router.post("/city_and_project/", response_model=CityAndProjectShow, status_code=status.HTTP_201_CREATED)
 def add_city_and_project(city_and_project_data: CityAndProjectCreate, db: Session = Depends(get_db)):
     """
     Создать новый проект.
