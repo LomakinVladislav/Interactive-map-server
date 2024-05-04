@@ -21,3 +21,4 @@ class Object(Base):
     boundaries = relationship("Boundaries", back_populates="object")
     object_type = relationship("Object_type", backref="object")
     city_and_project = relationship("City_and_project", backref="objects")
+    redemption_status = relationship("Redemption_status", backref="objects")

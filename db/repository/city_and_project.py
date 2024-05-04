@@ -8,8 +8,8 @@ def create_city_and_project(city_and_project_data: CityAndProjectCreate, db: Ses
     db.add(city_and_project)
     db.commit()
     db.refresh(city_and_project)
-    return {"city": city_and_project.city, "project_name": city_and_project.project_name}
-
+    return {"city": city_and_project.city, "project_name": city_and_project.project_name, "center_latitude": city_and_project.center_latitude,"center_longitude": city_and_project.center_longitude}
+    # return city_and_project
 
 def retrieve_city_and_project(db: Session, city_and_project_id: int):
     return db.query(City_and_project).filter(City_and_project.id == city_and_project_id).first()

@@ -5,6 +5,7 @@ from fastapi import Depends
 from db.models.boundaries import Boundaries
 from db.models.city_and_project import City_and_project
 from db.models.layer import Layer
+from db.models.redemption_status import Redemption_status
 from schemas.boundaries import BoundariesShow
 from schemas.object import ObjectCreate,ObjectShow,ObjectUpdate,ObjectDetails
 from db.session import get_db
@@ -105,39 +106,55 @@ def get_all_object_details(db: Session = Depends(get_db)):
 
 class ObjectWithBoundaries(ObjectShow):
     boundaries: List[BoundariesShow]
+    city: Optional[str] = None
+    project_name: Optional[str] = None
+    status_name: Optional[str] = None
 
     class Config:
         orm_mode = True
 
 
+
 @router.get("/object/", response_model=List[ObjectWithBoundaries], status_code=status.HTTP_200_OK)
 def read_objects_with_boundaries(
+    object_type_id: Optional[int] = Query(None),
+    layer_id: Optional[int] = Query(None),
+    city: Optional[str] = Query(None),
+    project_name: Optional[str] = Query(None),
+    db: Session = Depends(get_db)):
 
-        object_type_id: Optional[int] = Query(None),
-        layer_id: Optional[int] = Query(None),
-        city: Optional[str] = Query(None),
-        project_name: Optional[str] = Query(None),
-        db: Session = Depends(get_db)
-):
-
-    query = db.query(Object).options(joinedload(Object.boundaries), joinedload(Object.object_type))
+    query = (db.query(Object)
+             .options(
+        joinedload(Object.boundaries),
+        joinedload(Object.object_type),
+        joinedload(Object.city_and_project),
+        joinedload(Object.redemption_status)
+    ).join(Object.city_and_project)
+     .join(Object.redemption_status))
 
     if object_type_id is not None:
         query = query.filter(Object.object_type_id == object_type_id)
-
     if layer_id is not None:
         query = query.join(Boundaries).join(Layer).filter(Layer.id == layer_id)
-
     if city:
-        query = query.filter(Object.city_and_project.has(City_and_project.city == city))
-
+        query = query.filter(City_and_project.city == city)
     if project_name:
-        query = query.filter(Object.city_and_project.has(City_and_project.project_name == project_name))
+        query = query.filter(City_and_project.project_name == project_name)
 
     objects = query.all()
     if not objects:
         raise HTTPException(status_code=404, detail="Объекты не найдены по заданным критериям")
 
-    return objects
+
+    response_objects = []
+    for obj in objects:
+        response_object = ObjectWithBoundaries.from_orm(obj)
+        response_object.city = obj.city_and_project.city
+        response_object.project_name = obj.city_and_project.project_name
+        response_object.status_name = obj.redemption_status.status_name
+        response_objects.append(response_object)
+
+    return response_objects
+
 
 

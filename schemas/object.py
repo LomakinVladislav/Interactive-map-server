@@ -31,6 +31,7 @@ class ObjectCreate(ObjectBase):
 
 
 class ObjectShow(ObjectBase):
+    id: int
     address: str
     area: float
     cadastral_number: str

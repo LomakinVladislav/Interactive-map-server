@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session,joinedload
 
 from db.models.layer import Layer
 
-from schemas.layer import LayerShow,LayerCreate
+from schemas.layer import LayerShow, LayerCreate
 from schemas.boundaries import BoundariesShow
 from db.repository.layer import create_new_layer,get_layer
 from db.session import get_db
@@ -23,16 +23,13 @@ def add_layer(layer_data: LayerCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=f"Ошибка при создании слоя: {e}")
 
 
-@router.get("/layer/{layer_id}", response_model=LayerShow, status_code=status.HTTP_200_OK)
-def read_layer(layer_id: int, db: Session = Depends(get_db)):
+@router.get("/layer/", response_model=List[LayerShow], status_code=status.HTTP_200_OK)
+def read_layer(db: Session = Depends(get_db)):
     """
-       Получить слой.
-       """
-    layer = get_layer(db=db, layer_id=layer_id)
-    if not layer:
-        raise HTTPException(status_code=404, detail="Слой не найден")
+       Получить все слои.
+    """
+    layer = get_layer(db=db)
     return layer
-
 
 class LayerWithBoundaries(LayerShow):
     boundaries: List[BoundariesShow]
