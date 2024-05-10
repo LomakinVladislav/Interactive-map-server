@@ -104,7 +104,7 @@ def get_all_object_details(db: Session = Depends(get_db)):
 
 
 
-class ObjectWithBoundaries(ObjectShow):
+class ObjectWithAllData(ObjectShow):
     boundaries: List[BoundariesShow]
     city: Optional[str] = None
     project_name: Optional[str] = None
@@ -115,8 +115,8 @@ class ObjectWithBoundaries(ObjectShow):
 
 
 
-@router.get("/object/", response_model=List[ObjectWithBoundaries], status_code=status.HTTP_200_OK)
-def read_objects_with_boundaries(
+@router.get("/object/", response_model=List[ObjectWithAllData], status_code=status.HTTP_200_OK)
+def read_objects_with_all_data(
     object_type_id: Optional[int] = Query(None),
     layer_id: Optional[int] = Query(None),
     city: Optional[str] = Query(None),
@@ -142,13 +142,11 @@ def read_objects_with_boundaries(
         query = query.filter(City_and_project.project_name == project_name)
 
     objects = query.all()
-    if not objects:
-        raise HTTPException(status_code=404, detail="Объекты не найдены по заданным критериям")
 
 
     response_objects = []
     for obj in objects:
-        response_object = ObjectWithBoundaries.from_orm(obj)
+        response_object = ObjectWithAllData.from_orm(obj)
         response_object.city = obj.city_and_project.city
         response_object.project_name = obj.city_and_project.project_name
         response_object.status_name = obj.redemption_status.status_name

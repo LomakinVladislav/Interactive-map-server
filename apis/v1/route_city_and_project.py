@@ -52,9 +52,8 @@ def get_all_projects(db: Session = Depends(get_db)):
     """
     try:
         # Запрос на получение всех проектов
-        projects = db.query(City_and_project.project_name).distinct().all()
-        # Надлежащее преобразование каждого кортежа в экземпляр ProjectName
-        projects_list = [ProjectName(project_name=project[0]) for project in projects]
+        projects = db.query(City_and_project.project_name,City_and_project.center_latitude,City_and_project.center_longitude).distinct().all()
+        projects_list = [ProjectName(project_name=project[0], center_latitude=project[1], center_longitude=project[2]) for project in projects]
         return projects_list
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Не удалось получить список проектов: {e}")
