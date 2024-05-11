@@ -19,6 +19,8 @@ class ShowProject(CityAndProjectCreate):
 
 class ProjectName(BaseModel):
     project_name: str
+    center_latitude: float
+    center_longitude: float
 
 class City(BaseModel):
     city: str
